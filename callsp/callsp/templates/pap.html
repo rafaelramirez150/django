@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Tasky</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap.min.css'%}"; integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <a class="navbar-brand" href="#">Tasky</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+     
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto ml-5">
+          </ul>
+        </div>
+      </nav>
+      <script src="{% static 'jquery-3.5.1.js'%}"; integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script src="{% static 'bootstrap.bundle.min.js'%}"; integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  
+</body>
+{% block styles %}
+<style>
+    .text-red{
+        color: tomato !important;
+    }
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="container">
+    <div class="row pt-5">
+        <div class="col-6 offset-3">
+           
+            <form id="formAdd" action="nose.py" autocomplete="off">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group validate">
+                            <label for="">Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">--Select--</option>
+                                {% for product in product_list %}
+                                <option id="{{product.0}} " value="{{ product.1 }}">{{ product.1 }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-red text-muted mySpan"></small>
+                        </div>
+                        <div class="form-group validate">
+                            <label for="">Product</label>
+                            <select name="product" class="form-control">
+                                <option class="after" value="">--Select--</option>
+                            </select>
+                            <small class="text-red text-muted mySpan"></small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary pl-5 pr-5 btnSave">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+   $("#formAdd select[name='category']").on('change', function(){/*category debe reaccionar a change(cambio)*/
+    var $this = $(this);
+
+
+alert("baby " + $this.val() );
+
+    if($this.val() !=''){
+        $("#formAdd select[name='product']").find('.after').nextAll().remove();/*remueve 'todo lo que tenga'*/
+        $.ajax({
+            url: '/pap/'+$this.val(),
+            type: 'GET',
+            success: function(resp){
+
+                //alert(resp.data);
+
+                let y = resp.data.toString();    
+                let x = y.split(",");    
+                let options = '';
+
+                x.forEach( function(valor, indice, array) {
+                     console.log("En el índice " + indice + " hay este valor: " + valor);
+                     options+='<option value='+valor+'>'+valor +'</option>';
+                });
+
+                $("#formAdd select[name='product']").find('.after').after(options);
+            },
+            error: function(resp){
+                console.log('Something went wrong');
+            }
+        });
+    }else{
+        $("#formAdd select[name='product']").find('.after').nextAll().remove();
+    }
+   });
+</script>
+{% endblock scripts %}
+

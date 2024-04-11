@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Tasky</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap.min.css'%}"; integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <a class="navbar-brand" href="#">Tasky</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+     
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto ml-5">
+          </ul>
+        </div>
+      </nav>
+      <script src="{% static 'jquery-3.5.1.js'%}"; integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script src="{% static 'bootstrap.bundle.min.js'%}"; integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+</body>
+{% block styles %}
+<style>
+    .text-red{
+        color: tomato !important;
+    }
+</style>
+{% endblock styles %}
+
+{% block content %}
+
+<label  ID="lblAssetName"  name="lLlAssetName"></label>
+
+
+<form method="POST" id="post-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>id Categoria</label>
+      <input type="text" class="form-control" id="id_c" placeholder="id Categoria">
+    </div>
+     <div class="form-group">
+       <label>Descripción</label>
+       <textarea class="form-control" id="description" placeholder="Description"></textarea>
+     </div>
+     <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+ {% endblock content %}
+
+ {% block scripts %}
+ <script>
+$( document ).ready(function() {
+    console.log( "ready now!" );
+});
+
+$(document).on('submit', '#post-form',function(e){
+    e.preventDefault();
+
+    $.ajax({
+        type:'POST',
+        url:'/create/',
+        data:{
+            id_c:$('#id_c').val(),
+            description:$('#description').val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            action: 'post'
+        },
+        success:function(data){
+
+             //alert(data.data);  
+           
+            if(data.data==1)
+            {
+                alert("Pues!");
+                $('#lblAssetName').text("proceso efectuado satisfactoriamente!");
+
+            }
+           
+        },
+        error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+    }
+    });
+});
+
+
+ </script>
+ 
+ {% endblock scripts %}
+ </html>

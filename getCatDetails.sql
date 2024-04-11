@@ -1,0 +1,6 @@
+DELIMITER //
+CREATE PROCEDURE getCatDetails()
+BEGIN
+    SELECT * FROM category;
+END //
+DELIMITER ;
